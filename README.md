@@ -11,7 +11,32 @@ The source dataset contained:
 5. Invalid characters
 6. Data quality issues
 
-The objective was to transform raw transactional data into an analysis-ready dataset suitable for reporting in Power BI.
+<h1 align="center">Business Problem</h1>
+
+The company collects sales transactions from multiple operational systems. Before this data can be used for reporting and decision-making, it must be cleaned, validated, and standardized.
+
+The raw dataset contained several data quality issues including inconsistent date formats, duplicate transaction IDs, mixed customer information, non-standard product descriptions, and inconsistent business status values.
+
+Without proper data preparation, management could receive inaccurate revenue reports, incorrect customer segmentation, and misleading sales trends.
+
+The goal of this project was to create a reliable, analysis-ready data model that could support business reporting in Power BI and serve as a foundation for future analytical solutions.
+
+<h1 align="center">Business Questions</h1>
+
+- The cleaned dataset should help answer the following business questions:
+
+- Which products generate the highest revenue?
+
+- Which regions perform best?
+
+- Which sales channels generate the most orders?
+
+- How does revenue change over time?
+
+- What customer segments contribute most to sales?
+
+- Which order statuses dominate the sales process?
+
 
 ## <h1 align="center">DATA CLEANING</h1>
 
@@ -27,12 +52,13 @@ Some records contained an additional x character before the date value. I used R
   <img src="images/date-beforeafter.png" alt="date-beforeafter">
 </p>
 
-## 1. Standardize Date Format <br>
+## 2. Standardize Date Format <br>
 After cleaning the values, all dates were converted to a consistent date format and assigned the correct data type.
+
+Accurate time-based analysis depends on consistent date formatting across the dataset. Inconsistent date values can lead to incorrect aggregation of sales data, impacting revenue trends, period-over-period comparisons, and seasonal performance analysis. By standardizing date formats, the dataset becomes reliable for reporting, forecasting, and strategic decision-making.
+
 ## Result
-•	Consistent date formatting
-•	Proper chronological sorting
-•	Reliable time-series analysis
+The date column was fully standardized and converted to the appropriate data type, ensuring that all transactions are assigned to the correct reporting periods. This improves the accuracy of trend analysis, supports reliable time-based reporting, and provides a solid foundation for forecasting and other analytical processes in Power BI.
 
 <p align="center">
   <img src="images/date-afterformat.png" alt="date-afterformat">
@@ -42,14 +68,19 @@ After cleaning the values, all dates were converted to a consistent date format 
 
 “KlientSurowy” column contained multiple pieces of information stored in a single field and inconsistent text formatting. This structure made customer segmentation difficult.
 
+Separating customer identifiers from customer classification is essential for effective customer analysis. When multiple attributes are stored in a single column, reporting becomes less flexible and customer segments cannot be analyzed independently. By extracting and standardizing customer information, the dataset becomes suitable for customer segmentation, behavioural analysis, campaign performance evaluation, and future customer value calculations.
+
+After splitting the fields, customer attributes became available for direct analysis.
+
 <p align="center">
   <img src="images/klientsurowy-before.png" alt="klientsurowy-before">
 </p>
 
 ## Transformation Steps
 ## 1. Split Customer Information
-The original “KlientSurowy” field contained multiple product attributes stored in a single column, which could make further progress difficult.
-I used a Split column formula in order to distinct two values:
+The original "KlientSurowy" field contained multiple customer attributes stored within a single column, making the data difficult to analyze and use for reporting purposes.
+
+To improve data usability, I applied the Split Column transformation to separate the customer identifier and customer type into two distinct fields.
 
 <p align="center">
   <img src="images/klientsurowy-splitc.png" alt="klientsurowy-splitc">
@@ -87,26 +118,19 @@ Generated column names were replaced with meaningful business names:
 
 ## 3. Standardize Client IDs
 
-•	Converted text to lowercase
+Client identifiers were standardized to ensure consistency across the dataset. The transformation process included converting text to a consistent format, removing unnecessary text elements, applying trimming where required, and adding the standard "K" prefix to all customer IDs. 
 
-•	Removed unnecessary text
-
-•	Added the K prefix
-
-•	Standardized IDs across all records
+As a result, customer identifiers follow a uniform structure, reducing the risk of matching errors and improving the reliability of customer-related analysis.
 
 ## 4. Standardize Client Types
 
-Customer segments contained inconsistent capitalization. I used UPPERCASE formula to standaralize.
+Customer segments contained inconsistent capitalization and formatting, resulting in multiple representations of the same customer category. To ensure consistency across the dataset, I standardized all customer type values using the UPPERCASE transformation.
 
 <p align="center">
   <img src="images/clienttype-before.png" alt="clienttype-before">
 </p>
 
-Result
-•	Unique and consistent customer identifiers
-•	Clean customer segmentation
-•	Better data quality for future reporting
+After standardization, all customer segments follow a consistent format, enabling accurate grouping and comparison of customer categories. This improves data quality and ensures that future analyses, dashboards, and business reports produce reliable results.
 
 <p align="center">
   <img src="images/clienttype-after.png" alt="clienttype-after">
@@ -126,8 +150,9 @@ Final columns extracted from "“KlientSurowy”:
 </p>
 
 ## Transformation Steps
-The data neseccary fot futher analysis is "ProductID" because the rest of data can be fount in "Produkty" table.
-In this case I used formula Extract -> Text beofre delimiter to extract only ProductID and eliminate unnecessary data from this table.
+Only ProductID was retained because detailed product attributes already exist in the Product dimension table.
+This approach reduces data redundancy, improves model performance, and follows star schema design principles used in modern analytical solutions.
+I used the "Extract Text Before Delimiter" transformation to isolate the ProductID from the combined text field.
 
 The product dimension became analysis-ready and suitable for creating a star schema
 
@@ -137,17 +162,16 @@ The product dimension became analysis-ready and suitable for creating a star sch
 
 ## <h1 align="center">4. Region Standardization</h1>
 
-“Region” column contained inconsistent values caused by additional characters such as "/", "Polnoc".
+"Region" column contained inconsistent values caused by spelling variations and additional special characters. Examples included values such as "Polnoc" and "/Północ", both referring to the same business region.
+
+These inconsistencies could lead to the same region being treated as multiple categories during reporting and analysis.
 
 <p align="center">
   <img src="images/region-efore.png" alt="region-efore">
 </p>
 
 ## Transformation Steps
-
-•	Removed unnecessary special characters with Replace Values
-
-•	Standardized region names, by changing Połnoc -> Północ
+To standardize regional data, I removed unnecessary special characters using the Replace Values transformation and corrected inconsistent spelling variations. This ensured that each business region was represented by a single, consistent value across the dataset.
 
 Only valid region values remained:
 
@@ -155,24 +179,27 @@ Only valid region values remained:
   <img src="images/region-after.png" alt="region-after">
 </p>
 
+Consistent regional data is essential for accurate geographical analysis. If the same region appears under multiple names, sales and revenue may be split across separate categories, resulting in misleading reports and inaccurate performance comparisons. Standardizing region values ensures that all transactions are assigned to the correct region and enables reliable regional performance analysis.
+
 ## <h1 align="center">5. Order Status Standardization</h1>
 
-„StatusZamowienia” column contained inconsistent capitalization.
+„StatusZamowienia”  column contained inconsistent representations of the same business status due to differences in capitalization and abbreviated values.
 
 <p align="center">
   <img src="images/statuszamowienia-before.png" alt="statuszamowienia-before">
 </p>
 
 ## Transformation Steps
-I applied text standardization techniques such as Replace Values  to ensure consistent values throughout the dataset.
+To ensure consistency across the dataset, I applied text standardization techniques such as Replace Values.
+Consistent order statuses are essential for accurate operational reporting and performance monitoring. When the same status is represented in multiple ways, transactions may be distributed across separate categories, resulting in incorrect counts and misleading metrics.
 
-Result
-
-The same business status is now represented by a single standardized value.
+Result:
 
 <p align="center">
   <img src="images/statuszamowienia-after.png" alt="statuszamowienia-after">
 </p>
+
+After standardization, each business status is represented by a single, consistent value. This improves data quality, enables accurate reporting of order performance, and provides a reliable foundation for further business analysis.
 
 ## <h1 align="center">6. Data Quality Validation</h1>
 
@@ -188,41 +215,44 @@ One duplicated transaction ID (T000321) was identified. Since the records contai
   <img src="images/idtransakcji-excel.png" alt="idtransakcji-excel">
 </p>
 
-Rather than automatically removing duplicates, the records were investigated first to determine whether they represented a true duplicate or a legitimate business scenario.
+Instead of automatically removing the record, the transaction was investigated further because duplicate business keys do not always indicate duplicate transactions.
 
+This approach reflects real-world analytical practice where data quality issues should be validated before taking corrective actions.
 
-## <h1 align="center">7. Format standardization</h1>
+## <h1 align="center">7. Data Type Standardization</h1>
 
 <p align="center">
   <img src="images/column-type-before.png" alt="column-type-before">
 </p>
 
-Several numerical columns such as:
+Several columns containing numerical business data were initially stored as text values such as:
 
 - UnitPrice
   
 - Discount
 
 - UnitCost
-were converted to appropriate numeric data types.
 
-This ensured accurate calculations, aggregations and KPI reporting in Power BI.
+This ensured that all numerical values could be used correctly in calculations, aggregations, and reporting processes.
 
 <p align="center">
   <img src="images/column-type-after.png" alt="column-type-after">
 </p>
 
+Accurate data types are fundamental for reliable business analysis. When numerical values are stored as text, calculations such as revenue, profit, average order value, or discount analysis may produce incorrect results or fail entirely. Converting these columns to numeric data types ensures that Power BI can correctly aggregate data, calculate KPIs, and support accurate business reporting.
+
+
 ## <h1 align="center">8. ETL Architecture</h1>
 
-Instead of cleaning data directly inside reporting tables, a dedicated table named “sprzedaż_source” was created as the master data layer.
+Rather than applying transformations directly to reporting tables, I created a dedicated "sprzedaz_source" query that serves as the central data preparation layer.
 
 <p align="center">
   <img src="images/sprzedaz_source-diagram.png" alt="sprzedaz_source-diagram">
 </p>
 
-This architecture follows ETL best practices by separating the raw data layer from reporting and analytical layers.
+The "sprzedaz_source" table acts as a single source of truth for all subsequent analytical objects. All data quality checks, transformations, and standardization processes are performed in this layer before the data is consumed by reporting tables.
 
-All subsequent dimension tables will have a reference to sprzedaż_source – cleaned and prepared tables in order to increase efficiency of our project.
+This approach follows ETL and data modeling best practices by separating data preparation from reporting and visualization layers.
 
 Benefits
 
@@ -236,7 +266,7 @@ Benefits
 
 •	Scalable ETL workflow
 
-“Sprzedaz_source” structure:
+“Sprzedaz_source” query structure:
 
 ```
 let
@@ -267,7 +297,7 @@ in
   #"Changed column type with locale 1"
 ```
 
-„Sprzedaz” structure – created in order to put filters or inplement changes that will not influence our source or other tables created basic on sprzedaz_source
+"Sprzedaz" table was created as a reference to "sprzedaz_source". This approach enables additional reporting-specific transformations and filtering without modifying the underlying source layer or affecting other dependent tables.
 
 ```
 let
@@ -278,9 +308,11 @@ in
 ```
 
 ## <h1 align="center">8. New table - "kanały"</h1>
-I created new table „kanały” that bases on "sprzedaz_source" and shows all sales channels used by the company. Creating this dimension table improves reporting performance and simplifies data visualization in Power BI. 
+To support efficient reporting and data modeling, I created a dedicated "Kanaly" dimension table based on the cleaned "sprzedaz_source" dataset.
 
-Structure:
+Rather than storing channel information repeatedly within every transaction, a separate dimension table was created containing unique sales channels and their attributes.
+
+Query structure:
 
 ```
 let
@@ -295,9 +327,11 @@ in
   <img src="images/kanaly-table.png" alt="kanaly-table">
 </p>
 
+Creating a dedicated channel dimension improves both data model design and reporting performance. Instead of repeating the same channel information across thousands of sales records, channel attributes are stored once and linked to the fact table through a unique identifier.
+
 ## <h1 align="center">10. Calendar Table</h1>
 
-I created a nw, calendar table to prepare for visualisaton:
+I created a dedicated calendar table to support time intelligence calculations and date-based reporting.
 
 <p align="center">
   <img src="images/kalendarz.png" alt="kalendarz">
@@ -305,12 +339,23 @@ I created a nw, calendar table to prepare for visualisaton:
 
 ## Business Requirement
 
-Time intelligence calculations require a dedicated calendar table.
+Most analytical and reporting solutions require a dedicated calendar table to perform accurate time intelligence calculations. Transaction dates alone are not sufficient for advanced analysis because they do not provide a complete date structure needed for reporting.
 
 ## Transformation Steps
 
-A calendar dimension was generated based on the minimum and maximum sales dates found in the transaction data.
-Business Value
+The calendar table was generated dynamically based on the minimum and maximum sales dates found in the transaction dataset. Additional attributes were created to support filtering, grouping, and time-based calculations, including:
+
+- Year
+  
+- Month Number
+  
+- Month Name
+  
+- Day Name
+  
+- Day of Week
+
+Query structure: 
 
 ```
 let
@@ -338,9 +383,20 @@ The calendar table enables:
 •	Quarterly reporting
 •	Time Intelligence functions in Power BI
 
-## <h1 align="center">10. Query grupping</h1>
+## <h1 align="center">10. Additional Data Sources</h1>
 
-To have clean work I grupped queries into sections:
+To support future reporting and visualization, additional datasets were imported, including "klienci", "produkty", and geografia" tables.
+
+These datasets required only minor validation and standardization, such as checking data types, trimming spaces, and ensuring consistent text formatting before being incorporated into the data model.
+
+## <h1 align="center">11. Query Organization</h1>
+
+As the project grew, I organized queries into logical groups to improve maintainability and simplify navigation within Power Query.
+
+Grouping related queries makes the ETL process easier to understand, reduces development time, and improves collaboration when working with larger data models.
+
+Well-structured query organization improves project maintainability and scalability. As new tables, dimensions, and transformations are added, a clear folder structure helps developers and analysts quickly locate relevant queries, troubleshoot issues, and implement changes more efficiently.
+
 
 Before:
 <p align="center">
@@ -353,3 +409,40 @@ After:
   <img src="images/grupowanie-after.png" alt="grupowanie-after">
 </p>
 
+The Power Query environment became more organized, easier to navigate, and better prepared for future development. This approach follows BI development best practices and supports the creation of scalable analytical solutions.
+
+<h1 align="center">Project Summary</h1>
+
+he data preparation process improved the overall quality, consistency, and usability of the sales dataset.
+
+By resolving key data quality issues and implementing a structured ETL approach, the dataset became suitable for reliable business reporting and analytical decision-making.
+
+The resulting model supports:
+
+- Revenue and profitability analysis
+- Customer segmentation
+- Sales channel performance analysis
+- Regional performance analysis
+- Time-based reporting
+- KPI monitoring
+- Future dashboard development in Power BI
+  
+The project demonstrates practical application of data cleaning, data quality validation, ETL design principles, and dimensional modeling techniques used in modern BI solutions.his project focused on transforming raw sales data into a reliable, analysis-ready dataset using Power Query.
+
+During the process, multiple data quality issues were identified and resolved, including inconsistent date formats, combined customer attributes, non-standard product information, inconsistent regional values, duplicate transaction identifiers, incorrect data types, and inconsistent business status values.
+
+The project also introduced a structured ETL architecture based on a dedicated source layer, supporting reusable transformations, improved maintainability, and scalable data modeling practices.
+
+As a result, the dataset is now suitable for reporting, KPI calculations, customer segmentation, regional analysis, sales channel analysis, and time intelligence reporting in Power BI.
+
+The cleaned and structured model provides a solid foundation for further business analysis and dashboard development.
+
+<h1 align="center">Next Steps</h1>
+The next phase of the project will focus on building a Power BI data model and interactive dashboards to analyze:
+
+- Revenue trends
+- Customer behaviour
+- Product performance
+- Regional sales performance
+- Sales channel effectiveness
+- Key business KPIs
