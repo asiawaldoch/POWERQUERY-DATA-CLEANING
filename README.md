@@ -413,7 +413,7 @@ The Power Query environment became more organized, easier to navigate, and bette
 
 <h1 align="center">Project Summary</h1>
 
-he data preparation process improved the overall quality, consistency, and usability of the sales dataset.
+The data preparation process improved the overall quality, consistency, and usability of the sales dataset.
 
 By resolving key data quality issues and implementing a structured ETL approach, the dataset became suitable for reliable business reporting and analytical decision-making.
 
