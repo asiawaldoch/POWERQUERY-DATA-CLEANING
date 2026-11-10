@@ -21,6 +21,15 @@ Without proper data preparation, management could receive inaccurate revenue rep
 
 The goal of this project was to create a reliable, analysis-ready data model that could support business reporting in Power BI and serve as a foundation for future analytical solutions.
 
+<h1 align="center">Dataset Overview</h1>
+
+| Table | Number of Records | Contents |
+|---------|---------:|----------|
+| Sales | ~15,000 | Transaction-level sales data including transaction dates, products, customers, sales channels, quantities sold, discounts, costs, regions, and order statuses. |
+| Customers | 500 | Customer master data including customer identifiers, customer segments, assigned regions, account managers, and geographic references. |
+| Products | 30 | Product catalog containing product names, categories, subcategories, brands, and base prices. |
+| Geography | 4 | Regional structure including regions, headquarters locations, and regional managers. |
+
 <h1 align="center">Business Questions</h1>
 
 - The cleaned dataset should help answer the following business questions:
